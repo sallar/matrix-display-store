@@ -1,0 +1,21 @@
+{
+  "name": "led-matrix",
+  "version": "0.0.1",
+  "description": "RGB LED Matrix",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "repository": "git@github.com:sallar/led-matrix.git",
+  "author": "Sallar Kaboli <sallar.kaboli@gmail.com>",
+  "license": "MIT",
+  "scripts": {
+    "build": "tsc",
+    "prepublish": "tsc"
+  },
+  "dependencies": {
+    "@types/core-js": "^0.9.35",
+    "core-js": "^2.4.1"
+  },
+  "devDependencies": {
+    "typescript": "^2.1.4"
+  }
+}
