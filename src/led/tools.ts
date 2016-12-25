@@ -9,7 +9,9 @@ export function prepareFont(fontMap: number[][]): string[][] {
   ));
 }
 
-export function hexToRGB(hexStr: string): Array<number> {
-    const hex = parseInt(hexStr.substr(1), 16);
-    return [hex >> 16, hex >> 8 & 0xFF, hex & 0xFF];
+export function hexToRGB(hexStr: string | number): Array<number> {
+  if (typeof hexStr === 'string') {
+    hexStr = parseInt(hexStr.substr(1), 16);
+  }
+  return [hexStr >> 16, hexStr >> 8 & 0xFF, hexStr & 0xFF];
 }
