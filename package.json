@@ -1,6 +1,6 @@
 {
   "name": "led-matrix",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "RGB LED Matrix",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -8,6 +8,7 @@
   "author": "Sallar Kaboli <sallar.kaboli@gmail.com>",
   "license": "MIT",
   "scripts": {
+    "dev": "tsc --watch",
     "build": "tsc",
     "prepublish": "tsc"
   },

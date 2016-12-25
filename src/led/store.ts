@@ -386,6 +386,18 @@ export class Store {
       this.drawFastHLine(a, y, b - a + 1, color);
     }
   }
+
+  drawBitmap(x: number, y: number, bitmap: Array<number>, w: number, h: number, color: number) {
+    let i, j, byteWidth = Math.trunc((w + 7) / 8);
+
+    for (j = 0; j < h; j++) {
+      for (i = 0; i < w; i++) {
+        if (bitmap[Math.trunc(j * byteWidth + i / 8)] & (128 >> (i & 7))) {
+          this.drawPixel(x + i, y + j, color);
+        }
+      }
+    }
+  }
 }
 
 export function createStore(x: number, y: number): Store {
