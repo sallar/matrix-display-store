@@ -30,7 +30,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-import { getRGBA, IRGBA, IColor } from './color';
+import { getRGBA, IRGBA } from './color';
 
 export interface IPixel {
   on: boolean;
@@ -49,7 +49,7 @@ export class Store {
   constructor(x: number, y: number) {
     this.x = x;
     this.y = y;
-    this.fillScreen(0);
+    this.fillScreen(null);
   }
 
   fill(x: number = 0, y: number = 0, r: number = 0, g: number = 0, b: number = 0, a: number = 1): void {
@@ -91,9 +91,7 @@ export class Store {
     });
   }
 
-  drawPixel(x: number, y: number, c: IColor) {
-    c = getRGBA(c);
-
+  drawPixel(x: number, y: number, c: IRGBA) {
     if (x < this.x && y < this.y) {
       this.matrix[(y * this.x) + x] = {
         on: true,
@@ -102,7 +100,7 @@ export class Store {
     }
   }
 
-  drawLine(x1: number, y1: number, x2: number, y2: number, color: IColor) {
+  drawLine(x1: number, y1: number, x2: number, y2: number, color: IRGBA) {
     const steep = Math.abs(y2 - y1) > Math.abs(x2 - x1);
 
     if (steep) {
@@ -136,22 +134,22 @@ export class Store {
     }
   }
 
-  drawFastVLine(x: number, y: number, h: number, color: IColor) {
+  drawFastVLine(x: number, y: number, h: number, color: IRGBA) {
     this.drawLine(x, y, x, y + h - 1, color);
   }
 
-  drawFastHLine(x: number, y: number, w: number, color: IColor) {
+  drawFastHLine(x: number, y: number, w: number, color: IRGBA) {
     this.drawLine(x, y, x + w - 1, y, color);
   }
 
-  drawRect(x: number, y: number, w: number, h: number, color: IColor) {
+  drawRect(x: number, y: number, w: number, h: number, color: IRGBA) {
     this.drawFastHLine(x, y, w, color);
     this.drawFastHLine(x, y + h - 1, w, color);
     this.drawFastVLine(x, y, h, color);
     this.drawFastVLine(x + w - 1, y, h, color);
   }
 
-  drawRoundRect(x: number, y: number, w: number, h: number, r: number, color: IColor) {
+  drawRoundRect(x: number, y: number, w: number, h: number, r: number, color: IRGBA) {
     // Lines
     this.drawFastHLine(x+r  , y    , w-2*r, color); // Top
     this.drawFastHLine(x+r  , y+h-1, w-2*r, color); // Bottom
@@ -165,13 +163,13 @@ export class Store {
     this.drawCircleHelper(x+r    , y+h-r-1, r, 8, color);
   }
 
-  drawTriangle(x1: number, y1: number, x2: number, y2: number, x3: number, y3: number, color: IColor) {
+  drawTriangle(x1: number, y1: number, x2: number, y2: number, x3: number, y3: number, color: IRGBA) {
     this.drawLine(x1, y1, x2, y2, color);
     this.drawLine(x2, y2, x3, y3, color);
     this.drawLine(x3, y3, x1, y1, color);
   }
 
-  drawCircleHelper(x1: number, y1: number, r: number, cornername: number, color: IColor) {
+  drawCircleHelper(x1: number, y1: number, r: number, cornername: number, color: IRGBA) {
     let f     = 1 - r;
     let ddF_x = 1;
     let ddF_y = -2 * r;
@@ -210,7 +208,7 @@ export class Store {
     }
   }
 
-  drawCircle(x1: number, y1: number, r: number, color: IColor) {
+  drawCircle(x1: number, y1: number, r: number, color: IRGBA) {
     let f = 1 - r;
     let ddF_x = 1;
     let ddF_y = -2 * r;
@@ -243,34 +241,34 @@ export class Store {
     }
   }
 
-  fillScreen(color: IColor) {
+  fillScreen(color: IRGBA | null) {
     let pixel: IPixel;
-    if (typeof color === 'number' && color === 0x0000) {
+    if (color === null) {
       pixel = {
         on: false
       };
     } else {
       pixel = {
         on: true,
-        color: getRGBA(color)
+        color
       };
     }
     this.matrix = Array(this.x * this.y).fill(pixel);
   }
 
-  fillRect(x: number, y: number, w: number, h: number, color: IColor) {
+  fillRect(x: number, y: number, w: number, h: number, color: IRGBA) {
     for (let i = x; i < x + w; i += 1) {
       this.drawFastVLine(i, y, h, color);
     }
   }
 
-  fillRoundRect(x: number, y: number, w: number, h: number, r: number, color: number) {
+  fillRoundRect(x: number, y: number, w: number, h: number, r: number, color: IRGBA) {
     this.fillRect(x+r, y, w-2*r, h, color);
     this.fillCircleHelper(x+w-r-1, y+r, r, 1, h-2*r-1, color);
     this.fillCircleHelper(x+r    , y+r, r, 2, h-2*r-1, color);
   }
 
-  fillCircleHelper(x1: number, y1: number, r: number, cornername: number, delta: number, color: IColor) {
+  fillCircleHelper(x1: number, y1: number, r: number, cornername: number, delta: number, color: IRGBA) {
     let f       = 1 - r;
     let ddF_x   = 1;
     let ddF_y   = -2 * r;
@@ -299,12 +297,12 @@ export class Store {
     }
   }
 
-  fillCircle(x: number, y: number, r: number, color: IColor) {
+  fillCircle(x: number, y: number, r: number, color: IRGBA) {
     this.drawFastVLine(x, y - r, 2 * r + 1, color);
     this.fillCircleHelper(x, y, r, 3, 0, color);
   }
 
-  fillTriangle(x0: number, y0: number, x1: number, y1: number, x2: number, y2: number, color: IColor) {
+  fillTriangle(x0: number, y0: number, x1: number, y1: number, x2: number, y2: number, color: IRGBA) {
     let a, b, y, last;
 
     // Sort coordinates by Y order (y2 >= y1 >= y0)
@@ -387,7 +385,7 @@ export class Store {
     }
   }
 
-  drawBitmap(x: number, y: number, bitmap: Array<number>, w: number, h: number, color: number) {
+  drawBitmap(x: number, y: number, bitmap: Array<number>, w: number, h: number, color: IRGBA) {
     let i, j, byteWidth = Math.trunc((w + 7) / 8);
 
     for (j = 0; j < h; j++) {
