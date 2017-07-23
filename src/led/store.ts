@@ -52,7 +52,7 @@ export class Store {
     this.fillScreen(null);
   }
 
-  fill(x: number = 0, y: number = 0, r: number = 0, g: number = 0, b: number = 0, a: number = 1): void {
+  fill(x: number, y: number, r: number, g: number, b: number, a: number = 1): void {
     // If not in boundries, dont paint
     if (x < this.x && y < this.y) {
       this.matrix[(y * this.x) + x] = {
@@ -62,7 +62,7 @@ export class Store {
     }
   }
 
-  write(text: string, font: string[][], color: IRGBA): void {
+  write(x: number, y: number, text: string, font: string[][], color: IRGBA): void {
     const lines = text.split('\n');
     const {r, g, b, a} = color;
     const CHAR_WIDTH = font[0].length;
@@ -74,14 +74,14 @@ export class Store {
         const ind = ch.charCodeAt(i) - 32;
         const fontRow = font[ind];
         // For each column
-        for (let x = 0; x < CHAR_WIDTH; x += 1) {
-          const col = fontRow[x];
+        for (let dx = 0; dx < CHAR_WIDTH; dx += 1) {
+          const col = fontRow[dx];
           // For each pixel
-          for (let y = 0; y < CHAR_HEIGHT; y += 1) {
-            if (col[y] === '1') {
+          for (let dy = 0; dy < CHAR_HEIGHT; dy += 1) {
+            if (col[dy] === '1') {
               this.fill(
-                x + (i * CHAR_WIDTH),
-                y + (line * CHAR_HEIGHT),
+                x + dx + (i * CHAR_WIDTH),
+                y + dy + (line * CHAR_HEIGHT),
                 r, g, b, a
               );
             }
