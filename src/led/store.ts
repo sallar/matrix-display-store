@@ -62,9 +62,9 @@ export class Store {
     }
   }
 
-  write(text: string, font: string[][], color: string): void {
+  write(text: string, font: string[][], color: IRGBA): void {
     const lines = text.split('\n');
-    const {r, g, b, a} = getRGBA(color);
+    const {r, g, b, a} = color;
     const CHAR_WIDTH = font[0].length;
     const CHAR_HEIGHT = font[0][0].length;
 
