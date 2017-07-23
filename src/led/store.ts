@@ -41,6 +41,14 @@ export interface IMatrix extends Array<any> {
   [index: number]: IPixel;
 }
 
+export interface IFont {
+  bitmap: number[];
+  glyphs: number[][];
+  first: number;
+  last: number;
+  yAdvance: number;
+}
+
 export class Store {
   private x: number;
   private y: number;
@@ -62,33 +70,63 @@ export class Store {
     }
   }
 
-  write(x: number, y: number, text: string, font: string[][], color: IRGBA): void {
-    const lines = text.split('\n');
-    const {r, g, b, a} = color;
-    const CHAR_WIDTH = font[0].length;
-    const CHAR_HEIGHT = font[0][0].length;
+  write(x: number, y: number, text: string, font: IFont, size: number, color: IRGBA) {
+    let cursorX = x, cursorY = y;
 
-    lines.forEach((ch: string, line: number) => {
-      // For each character
-      for (let i = 0; i < ch.length; i += 1) {
-        const ind = ch.charCodeAt(i) - 32;
-        const fontRow = font[ind];
-        // For each column
-        for (let dx = 0; dx < CHAR_WIDTH; dx += 1) {
-          const col = fontRow[dx];
-          // For each pixel
-          for (let dy = 0; dy < CHAR_HEIGHT; dy += 1) {
-            if (col[dy] === '1') {
-              this.fill(
-                x + dx + (i * CHAR_WIDTH),
-                y + dy + (line * CHAR_HEIGHT),
-                r, g, b, a
-              );
-            }
+    const { first, last, glyphs, yAdvance } = font;
+    for (const ch of text) {
+      if (ch === '\n') {
+        cursorY += size * yAdvance;
+        cursorX = x;
+        continue;
+      }
+      const code = ch.charCodeAt(0);
+      // Skip if not in range
+      if (code < first || code > last) {
+        continue;
+      }
+      this.drawChar(cursorX, cursorY, ch, font, size, color);
+      const glyph = glyphs[code - first];
+      cursorX += glyph[3] * size;
+    }
+  }
+
+  drawChar(x: number, y: number, ch: string, font: IFont, size: number, color: IRGBA) {
+    const c = ch.charCodeAt(0);
+    const { glyphs, bitmap, first, yAdvance } = font;
+    const glyph = glyphs[c - first];
+    let [bo, w, h, xAdvance, xo, yo] = glyph;
+    let bits = 0, bit = 0, xo16 = 0, yo16 = 0;
+
+    // Magic
+    yo = Math.ceil(yAdvance / 2) + yo;
+
+    if (size > 1) {
+      xo16 = xo;
+      yo16 = yo;
+    }
+
+    for (let yy = 0; yy < h; yy++) {
+      for (let xx = 0; xx < w; xx++) {
+        if (!(bit++ & 7)) {
+          bits = bitmap[bo++];
+        }
+        if (bits & 0x80) {
+          if (size === 1) {
+            this.drawPixel(x + xo + xx, y + yy + yo, color);
+          } else {
+            this.fillRect(
+              x + (xo16 + xx) * size,
+              y + (yo16 + yy) * size,
+              size,
+              size,
+              color
+            );
           }
         }
+        bits <<= 1;
       }
-    });
+    }
   }
 
   drawPixel(x: number, y: number, c: IRGBA) {

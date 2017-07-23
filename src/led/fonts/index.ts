@@ -1,3 +1,3 @@
-export { font as fivebyfive } from './5x5';
-export { font as tama } from './tama';
-export { font as m38 } from './m38';
+export { font as OrgDot } from './orgdot';
+export { font as PicoPixel } from './picopixel';
+export { font as Tiny } from './tiny';
