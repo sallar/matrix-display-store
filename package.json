@@ -1,6 +1,6 @@
 {
   "name": "led-matrix",
-  "version": "0.1.4",
+  "version": "0.2.0",
   "description": "RGB LED Matrix",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -8,6 +8,7 @@
   "author": "Sallar Kaboli <sallar.kaboli@gmail.com>",
   "license": "MIT",
   "scripts": {
+    "test": "mocha test",
     "dev": "tsc --watch",
     "build": "tsc",
     "prepublish": "tsc"
@@ -17,6 +18,11 @@
     "core-js": "^2.4.1"
   },
   "devDependencies": {
+    "@types/chai": "^4.0.1",
+    "@types/mocha": "^2.2.41",
+    "chai": "^4.1.0",
+    "mocha": "^3.4.2",
+    "ts-node": "^3.2.1",
     "typescript": "^2.1.4"
   }
 }

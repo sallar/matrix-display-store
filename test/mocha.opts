@@ -1,0 +1,4 @@
+--recursive
+--reporter spec
+--timeout 10000
+--compilers ts:ts-node/register
