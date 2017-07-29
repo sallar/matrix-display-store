@@ -101,8 +101,6 @@ export class Store {
     let [bo, w, h, xAdvance, xo, yo] = glyph;
     let bits = 0, bit = 0, xo16 = 0, yo16 = 0;
 
-    console.log(c, ch, glyph);
-
     // Magic
     yo += yOffsetCorrection;
 
