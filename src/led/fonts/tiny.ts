@@ -115,7 +115,8 @@ export const font = {
   glyphs,
   first: 0x20,
   last: 0x7e,
-  yAdvance: 4
+  yAdvance: 4,
+  yOffsetCorrection: 2
 };
 
 // Approx. 814 bytes
