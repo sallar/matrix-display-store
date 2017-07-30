@@ -7,7 +7,11 @@
     "preserveConstEnums": true,
     "sourceMap": false,
     "target": "es5",
-    "outDir": "./dist"
+    "outDir": "./dist",
+    "lib": [
+      "es2015",
+      "dom"
+    ]
   },
   "files": [
     "src/index.ts"

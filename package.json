@@ -13,10 +13,7 @@
     "build": "tsc",
     "prepublish": "tsc"
   },
-  "dependencies": {
-    "@types/core-js": "^0.9.35",
-    "core-js": "^2.4.1"
-  },
+  "dependencies": {},
   "devDependencies": {
     "@types/chai": "^4.0.1",
     "@types/mocha": "^2.2.41",
