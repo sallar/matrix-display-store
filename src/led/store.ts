@@ -47,6 +47,8 @@ export interface IFont {
   first: number;
   last: number;
   yAdvance: number;
+  yOffsetCorrection: number;
+  cp437?: boolean;
 }
 
 export class Store {
@@ -61,19 +63,13 @@ export class Store {
   }
 
   fill(x: number, y: number, r: number, g: number, b: number, a: number = 1): void {
-    // If not in boundries, dont paint
-    if (x < this.x && y < this.y) {
-      this.matrix[(y * this.x) + x] = {
-        on: true,
-        color: { r, g, b, a }
-      };
-    }
+    this.drawPixel(x, y, { r, g, b, a });
   }
 
   write(x: number, y: number, text: string, font: IFont, size: number, color: IRGBA) {
     let cursorX = x, cursorY = y;
 
-    const { first, last, glyphs, yAdvance } = font;
+    const { first, last, glyphs, yAdvance, cp437 } = font;
     for (const ch of text) {
       if (ch === '\n') {
         cursorY += size * yAdvance;
@@ -81,25 +77,32 @@ export class Store {
         continue;
       }
       const code = ch.charCodeAt(0);
+      let c = ch.charCodeAt(0);
+      if (c > 0x7e && cp437) {
+        c -= 0x22;
+      }
       // Skip if not in range
-      if (code < first || code > last) {
+      if (c < first || c > last) {
         continue;
       }
       this.drawChar(cursorX, cursorY, ch, font, size, color);
-      const glyph = glyphs[code - first];
+      const glyph = glyphs[c - first];
       cursorX += glyph[3] * size;
     }
   }
 
   drawChar(x: number, y: number, ch: string, font: IFont, size: number, color: IRGBA) {
-    const c = ch.charCodeAt(0);
-    const { glyphs, bitmap, first, yAdvance } = font;
+    const { glyphs, bitmap, first, yAdvance, yOffsetCorrection, cp437 } = font;
+    let c = ch.charCodeAt(0);
+    if (c > 0x7E && cp437) {
+      c -= 0x22;
+    }
     const glyph = glyphs[c - first];
     let [bo, w, h, xAdvance, xo, yo] = glyph;
     let bits = 0, bit = 0, xo16 = 0, yo16 = 0;
 
     // Magic
-    yo = Math.ceil(yAdvance / 2) + yo;
+    yo += yOffsetCorrection;
 
     if (size > 1) {
       xo16 = xo;
@@ -130,7 +133,7 @@ export class Store {
   }
 
   drawPixel(x: number, y: number, c: IRGBA) {
-    if (x < this.x && y < this.y) {
+    if ((x >= 0 && x < this.x) && (y >= 0 && y < this.y)) {
       this.matrix[(y * this.x) + x] = {
         on: true,
         color: c
