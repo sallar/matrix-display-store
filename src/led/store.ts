@@ -30,7 +30,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-import { getRGBA, IRGBA } from './color';
+import { IRGBA } from './color';
 
 export interface IPixel {
   on: boolean;
@@ -76,7 +76,6 @@ export class Store {
         cursorX = x;
         continue;
       }
-      const code = ch.charCodeAt(0);
       let c = ch.charCodeAt(0);
       if (c > 0x7e && cp437) {
         c -= 0x22;
@@ -92,13 +91,13 @@ export class Store {
   }
 
   drawChar(x: number, y: number, ch: string, font: IFont, size: number, color: IRGBA) {
-    const { glyphs, bitmap, first, yAdvance, yOffsetCorrection, cp437 } = font;
+    const { glyphs, bitmap, first, yOffsetCorrection, cp437 } = font;
     let c = ch.charCodeAt(0);
     if (c > 0x7E && cp437) {
       c -= 0x22;
     }
     const glyph = glyphs[c - first];
-    let [bo, w, h, xAdvance, xo, yo] = glyph;
+    let [bo, w, h, /* xAdvance */, xo, yo] = glyph;
     let bits = 0, bit = 0, xo16 = 0, yo16 = 0;
 
     // Magic
