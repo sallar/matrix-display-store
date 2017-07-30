@@ -1,6 +1,6 @@
 import 'mocha';
 import { assert } from 'chai';
-import { Store, getRGBA, PicoPixel } from '../src/';
+import { Store, Color, PicoPixel } from '../src/';
 
 const output = `XX  XX    XX  XX    XX  XX      
   X   X X   X   X X   X   X     
@@ -38,7 +38,7 @@ function storeToString(store: Store) {
 describe('Text', () => {
   it('Writes text', () => {
     const store = new Store(WIDTH, HEIGHT);
-    store.write(0, 0, "22:22:22", PicoPixel, 1, getRGBA("#ff0000"));
+    store.write(0, 0, "22:22:22", PicoPixel, 1, Color.hex("#ff0000"));
     assert.equal(storeToString(store), output);
   });
 });

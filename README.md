@@ -1,5 +1,12 @@
 # RGB LED Matrix
 
+[![Build Status](https://travis-ci.org/sallar/led-matrix.svg?branch=master)](https://travis-ci.org/sallar/led-matrix)
+
+This library provides a set of tools for:
+
++ Simulating a physical RGB LED Matrix using HTML5
++ A data store for creating shapes, colors, text in order to render on the Matrix
+
 ## Install
 
 ``` bash
