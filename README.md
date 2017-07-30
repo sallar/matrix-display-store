@@ -75,7 +75,7 @@ To make working with this object easier, this module exports some color conversi
 import { Color } from 'led-matrix';
 
 Color.hex('#FF0000');
-Color.hex('0xFF0000');
+Color.hex(0xFF0000);
 Color.rgba(255, 255, 255, 0.5);
 ```
 
