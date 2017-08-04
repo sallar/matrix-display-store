@@ -43,12 +43,13 @@ export interface IMatrix extends Array<any> {
 
 export interface IFont {
   bitmap: number[];
-  glyphs: number[][];
-  first: number;
-  last: number;
-  yAdvance: number;
-  yOffsetCorrection: number;
+  glyphs?: number[][];
+  first?: number;
+  last?: number;
+  yAdvance?: number;
+  yOffsetCorrection?: number;
   cp437?: boolean;
+  classic?: boolean;
 }
 
 export class Store {
@@ -68,65 +69,99 @@ export class Store {
 
   write(x: number, y: number, text: string, font: IFont, size: number, color: IRGBA) {
     let cursorX = x, cursorY = y;
-
-    const { first, last, glyphs, yAdvance, cp437 } = font;
     for (const ch of text) {
-      if (ch === '\n') {
-        cursorY += size * yAdvance;
-        cursorX = x;
-        continue;
-      }
       let c = ch.charCodeAt(0);
-      if (c > 0x7e && cp437) {
-        c -= 0x22;
+      if (font.classic) {
+        if (ch === '\n') {
+          cursorX = x;
+          cursorY += size * 8;
+          continue;
+        }
+        this.drawChar(cursorX, cursorY, ch, font, size, color);
+        cursorX += size * 6;
+      } else {
+        const { first, last, glyphs, yAdvance, cp437 } = font;
+        if (ch === '\n') {
+          cursorX = x;
+          cursorY += size * yAdvance;
+          continue;
+        }
+        if (c > 0x7e && cp437) {
+          c -= 0x22;
+        }
+        // Skip if not in range
+        if (c < first || c > last) {
+          continue;
+        }
+        this.drawChar(cursorX, cursorY, ch, font, size, color);
+        const glyph = glyphs[c - first];
+        cursorX += glyph[3] * size; 
       }
-      // Skip if not in range
-      if (c < first || c > last) {
-        continue;
-      }
-      this.drawChar(cursorX, cursorY, ch, font, size, color);
-      const glyph = glyphs[c - first];
-      cursorX += glyph[3] * size;
     }
   }
 
   drawChar(x: number, y: number, ch: string, font: IFont, size: number, color: IRGBA) {
-    const { glyphs, bitmap, first, yOffsetCorrection, cp437 } = font;
     let c = ch.charCodeAt(0);
-    if (c > 0x7E && cp437) {
-      c -= 0x22;
-    }
-    const glyph = glyphs[c - first];
-    let [bo, w, h, /* xAdvance */, xo, yo] = glyph;
-    let bits = 0, bit = 0, xo16 = 0, yo16 = 0;
-
-    // Magic
-    yo += yOffsetCorrection;
-
-    if (size > 1) {
-      xo16 = xo;
-      yo16 = yo;
-    }
-
-    for (let yy = 0; yy < h; yy++) {
-      for (let xx = 0; xx < w; xx++) {
-        if (!(bit++ & 7)) {
-          bits = bitmap[bo++];
-        }
-        if (bits & 0x80) {
-          if (size === 1) {
-            this.drawPixel(x + xo + xx, y + yy + yo, color);
-          } else {
-            this.fillRect(
-              x + (xo16 + xx) * size,
-              y + (yo16 + yy) * size,
-              size,
-              size,
-              color
-            );
+    if (font.classic) { // Classic fonts (fixed width bitmap array)
+      // Dont draw if the font clips
+      if (
+        (x >= this.x)  ||
+        (y >= this.y)  ||
+        ((x + 6 * size - 1) < 0) ||
+        ((y + 8 * size - 1) < 0)
+      ) {
+        return;
+      }
+      const { bitmap } = font;
+      for (let i = 0; i < 5; i++) {
+        let line = bitmap[c * 5 + i];
+        for (let j = 0; j < 8; j++, line >>= 1) {
+          if (line & 1) {
+            if (size === 1) {
+              this.drawPixel(x + i, y + j, color);
+            } else {
+              this.fillRect(x + i * size, y + j * size, size, size, color);
+            }
           }
         }
-        bits <<= 1;
+      }
+    } else { // Non-classic fonts (variable width/height)
+      const { glyphs, bitmap, first, yOffsetCorrection, cp437 } = font;
+      if (c > 0x7E && cp437) {
+        c -= 0x22;
+      }
+      const glyph = glyphs[c - first];
+      let [bo, w, h, /* xAdvance */, xo, yo] = glyph;
+      let bits = 0, bit = 0, xo16 = 0, yo16 = 0;
+
+      // Magic
+      yo += yOffsetCorrection;
+
+      if (size > 1) {
+        xo16 = xo;
+        yo16 = yo;
+      }
+
+      for (let yy = 0; yy < h; yy++) {
+        for (let xx = 0; xx < w; xx++) {
+          if (!(bit++ & 7)) {
+            bits = bitmap[bo++];
+          }
+          if (bits & 0x80) {
+            if (size === 1) {
+              this.drawPixel(x + xo + xx, y + yy + yo, color);
+            } else {
+              this.fillRect(
+                x + (xo16 + xx) * size,
+                y + (yo16 + yy) * size,
+                size,
+                size,
+                color
+              );
+            }
+          }
+          bits <<= 1;
+        }
       }
     }
   }
