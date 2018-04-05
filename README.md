@@ -1,24 +1,27 @@
 # RGB LED Matrix
 
-[![Build Status](https://travis-ci.org/sallar/led-matrix.svg?branch=master)](https://travis-ci.org/sallar/led-matrix)
+[![Build Status](https://travis-ci.org/sallar/matrix-display-store.svg?branch=master)](https://travis-ci.org/sallar/matrix-display-store)
 
 This library provides a set of tools for:
 
 + Simulating a physical RGB LED Matrix using HTML5
 + A data store for creating shapes, colors, text in order to render on the Matrix
 
+:warning: The HTML5 Matrix simulator is removed from this package starting from `v1.0.0` and moved to [it's own package](https://github.com/sallar/led-matrix).
+
 ## Install
 
 ``` bash
-$ npm install led-matrix --save-dev
+$ npm install matrix-display-store --save-dev
 # or
-$ yarn add led-matrix
+$ yarn add matrix-display-store
 ```
 
 ## Usage
 
 ``` js
-import { LEDMatrix, createStore } from 'led-matrix';
+import { createStore } from 'matrix-display-store';
+import { LEDMatrix } from 'led-matrix';
 
 const store = createStore(32, 16);
 const matrix = new LEDMatrix(canvasElement, {
@@ -79,7 +82,7 @@ interface IRGBA {
 To make working with this object easier, this module exports some color conversion tools:
 
 ``` typescript
-import { Color } from 'led-matrix';
+import { Color } from 'matrix-display-store';
 
 Color.hex('#FF0000');
 Color.hex(0xFF0000);
