@@ -1,4 +1,4 @@
-# RGB LED Matrix
+# Matrix Display Store
 
 [![Build Status](https://travis-ci.org/sallar/matrix-display-store.svg?branch=master)](https://travis-ci.org/sallar/matrix-display-store)
 
@@ -30,21 +30,7 @@ matrix.setData(store.matrix);
 matrix.render();
 ```
 
-### Options
-
-``` typescript
-{
-  x: number;
-  y: number;
-  pixelWidth: number;
-  pixelHeight: number;
-  margin: number;
-  glow: boolean;
-  animated: boolean;
-}
-```
-
-### Store Methods
+## Store Methods
 
 + `store.write(x, y, text, font, size, color)`
 + `store.fill(x, y, r, g, b, a)`
@@ -63,7 +49,7 @@ matrix.render();
 + `store.fillCirlce(x, y, radius, color)`
 + `store.drawBitmap(x, y, bitmap, w, h, color)`
 
-### Color Tools
+## Color Tools
 
 The `Store` accepts colors in `IRGBA` type:
 
