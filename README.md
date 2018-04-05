@@ -2,10 +2,7 @@
 
 [![Build Status](https://travis-ci.org/sallar/matrix-display-store.svg?branch=master)](https://travis-ci.org/sallar/matrix-display-store)
 
-This library provides a set of tools for:
-
-+ Simulating a physical RGB LED Matrix using HTML5
-+ A data store for creating shapes, colors, text in order to render on the Matrix
+This library provides a data store for creating shapes, colors, text in order to render in a matrix data store.
 
 :warning: The HTML5 Matrix simulator is removed from this package starting from `v1.0.0` and moved to [it's own package](https://github.com/sallar/led-matrix).
 
