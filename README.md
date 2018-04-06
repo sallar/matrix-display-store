@@ -72,6 +72,12 @@ Color.hex(0xFF0000);
 Color.rgba(255, 255, 255, 0.5);
 ```
 
+## Related
+
++ [rpi-matrix](https://github.com/sallar/rpi-matrix)
++ [led-matrix](https://github.com/sallar/led-matrix)
++ [led-matrix-simulator](https://github.com/sallar/led-matrix-simulator)
+
 ## License
 
 Licensed under the [MIT License](LICENSE)
