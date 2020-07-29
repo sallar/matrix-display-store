@@ -34,7 +34,7 @@ matrix.render();
 
 + `store.write(x, y, text, font, size, color)`
 + `store.fill(x, y, r, g, b, a)`
-+ `store.drawPixel(x, y, r, color)`
++ `store.drawPixel(x, y, color)`
 + `store.drawLine(x1, y1, x2, y2, color)`
 + `store.drawFastVLine(x, y, h, color)`
 + `store.drawFastHLine(x, y, w, color)`
